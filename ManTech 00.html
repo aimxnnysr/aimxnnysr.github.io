@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Site</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background-color: #000000;
+            overflow: hidden;
+        }
+
+        .centered-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: center;
+            background-color: #000000;
+        }
+
+        .username-input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #222;
+            color: #fff;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #06e450;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #0bb644;
+        }
+
+        .content-screen {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            display: none; /* Initially hidden */
+        }
+
+        .profile-img {
+            border: 2px solid #000000;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-img:hover {
+            box-shadow: 0 0 15px rgba(209, 209, 209, 0.8);
+            transform: scale(1.05);
+        }
+
+        .biodata {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .biodata h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .biodata p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .popup-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup-button:hover {
+            background-color: #ffffff;
+        }
+
+        .music-button {
+            width: 40px; /* Adjust the size as needed */
+            height: 40px; /* Adjust the size as needed */
+            background: url('media/button music.jpg') no-repeat center center;
+            background-size: contain; /* Adjust to fit the button */
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .music-button:hover{
+            box-shadow: 0 0 15px #0bb644;
+            transform: scale(1.05);
+        }
+
+        .home-button {
+            width: 40px; /* Adjust the size as needed */
+            height: 40px; /* Adjust the size as needed */
+            background: url('media/button home') no-repeat center center;
+            background-size: contain; /* Adjust to fit the button */
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .home-button:hover {
+            box-shadow: 0 0 15px #0bb644;
+            transform: scale(1.05);
+        }
+
+        /* Transition effect for fade-in and fade-out */
+        .fade {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <audio id="background-music" src="media/song/Terbang Tunduk - Fynn Jamal (cover by me).mp3" autoplay loop></audio>
+
+    <div id="login-screen" class="centered-box">
+        <input type="text" placeholder="Username" class="username-input" id="username">
+        <button class="search-button" onclick="checkUsername()">Search</button>
+    </div>
+
+    <div id="content-screen" class="content-screen fade">
+        <img id="profile-img" src="" alt="Profile Image" class="profile-img" onclick="showPopup()">
+        <div class="biodata">
+            <h2 id="biodata-name">Username's Biodata</h2>
+            <p><strong>Name:</strong> <span id="biodata-fullname"></span></p>
+            <p><strong>Role:</strong> <span id="biodata-role"></span></p>
+            <p><strong>Location:</strong> <span id="biodata-location"></span></p>
+        </div>
+        
+    </div>
+    <button class="home-button" onclick="goToHome()"></button>
+    <button class="music-button" id="toggle-music" onclick="toggleMusic()"></button>
+
+    <script>
+               const users = {
+            "aiman": {
+                image: "media/aiman.jpg",
+                fullname: "Aiman Amsyar",
+                role: "Developer",
+                location: "Perak"
+            },
+            "aniq": {
+                image: "media/aniq.jpg",
+                fullname: "Aniq Haziq",
+                role: "Analyst",
+                location: "Johor"
+            },
+            "azlan": {
+                image: "media/azlann.jpg",
+                fullname: "Azlann Marzuqi",
+                role: "Project Manager",
+                location: "Selangor"
+            },
+            "airell": {
+                image: "media/airell.jpg",
+                fullname: "Airell Ikhwan",
+                role: "Software Engineer",
+                location: "Selangor"
+            },
+            "aqiel": {
+                image: "media/aqiel.jpg",
+                fullname: "Aqiel Hilmi",
+                role: "UI/UX Designer",
+                location: "Selangor"
+            },
+            "faes": {
+                image: "media/faes.jpg",
+                fullname: "Faessyafiq Adhry",
+                role: "Content Creator",
+                location: "Sabah"
+            },
+            "nitis": {
+                image: "media/nitis.jpg",
+                fullname: "Nitis",
+                role: "Network Specialist",
+                location: "Johor"
+            },
+            "amar": {
+                image: "media/amar.jpg",
+                fullname: "Amar Amali",
+                role: "Designer",
+                location: "Perak Man"
+            },
+            "reez": {
+                image: "media/reez.jpg",
+                fullname: "Reez Qushaiyyi",
+                role: "-",
+                location: "Sabah Bakalakau"
+            },
+            "irdina": {
+                image: "media/irdina.jpg",
+                fullname: "Irdina Batrisya",
+                role: "-",
+                location: "Perak Ganja"
+            },
+            "iman": {
+                image: "media/iman.jpg",
+                fullname: "Nurul Iman",
+                role: "Artist",
+                location: "Johor Daulat Tuanku"
+            },
+            "aliah": {
+                image: "media/aliah.jpg",
+                fullname: "Aliah Safiyyah",
+                role: "-",
+                location: "Pahang"
+            },
+            "aleesa": {
+                image: "media/aleesa.jpg",
+                fullname: "Aleesa Sofea",
+                role: "Perdana Menteri",
+                location: "Perak Lagi"
+            },
+            "balqis": {
+                image: "media/balqis.jpg",
+                fullname: "Nur Balqis",
+                role: "-",
+                location: "Kelantan"
+            },
+            "chuah": {
+                image: "media/chuah.jpg",
+                fullname: "Chuah Zhe Ern",
+                role: "-",
+                location: "Kelantan"
+            },
+            "ariana": {
+                image: "media/ariana.jpg",
+                fullname: "Ariana Onyinyechukwu",
+                role: "-",
+                location: "Melakau"
+            },
+            "dalili": {
+                image: "media/dalili.jpg",
+                fullname: "Dalili Syahmina",
+                role: "-",
+                location: "Kajang"
+            }
+        };
+       function checkUsername() {
+            var username = document.getElementById("username").value.toLowerCase();
+            var user = users[username];
+
+            if (user) {
+                updateContent(user);
+                fadeOut("login-screen", function() {
+                    fadeIn("content-screen");
+                });
+            } else {
+                alert("Invalid username! Only 'Jimmy Jolly' members.");
+            }
+        }
+
+        function updateContent(user) {
+            document.getElementById("profile-img").src = user.image;
+            document.getElementById("biodata-name").textContent = `${user.fullname}'s Biodata`;
+            document.getElementById("biodata-fullname").textContent = user.fullname;
+            document.getElementById("biodata-role").textContent = user.role;
+            document.getElementById("biodata-location").textContent = user.location;
+        }
+
+        function fadeOut(elementId, callback) {
+            var element = document.getElementById(elementId);
+            element.classList.add("fade");
+            element.classList.remove("fade-in");
+            setTimeout(function() {
+                element.style.display = "none";
+                callback();
+            }, 500); // Wait for the fade-out transition to complete
+        }
+
+        function fadeIn(elementId) {
+            var element = document.getElementById(elementId);
+            element.style.display = "flex";
+            setTimeout(function() {
+                element.classList.add("fade-in");
+                element.classList.remove("fade");
+            }, 10); // Slight delay to ensure the transition works
+        }
+
+        // Add event listener for Enter key
+        document.getElementById("username").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                checkUsername();
+            }
+        });
+
+        function showPopup() {
+            alert("I know my mistakes, I'll take the responsibility");
+        }
+
+        function toggleMusic() {
+            var audio = document.getElementById("background-music");
+            var button = document.getElementById("toggle-music");
+
+            if (audio.paused) {
+                audio.play();
+                button.style.backgroundImage = "url('media/button music.jpg')"; // Ensure the image is set correctly
+            } else {
+                audio.pause();
+                button.style.backgroundImage = "url('media/button music.jpg')"; // Ensure the image is set correctly
+            }
+        }
+
+        function goToHome() {
+            fadeOut("content-screen", function() {
+                fadeIn("login-screen");
+            });
+        }
+    </script>
+</body>
+</html>
